@@ -1,3 +1,6 @@
+# local Intellij Files and folders
+/.idea
+
 # Compiled class file
 *.class
 
