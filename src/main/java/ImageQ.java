@@ -32,14 +32,14 @@ public class ImageQ{
     {
         this.BUFFER_SIZE = buffer;
         this.QUEUE_MAX = maxsize;
-        this.url = "https://danbooru.donmai.us/posts.json?limit="+this.QUEUE_MAX+"&page=";
+        this.url = "&limit="+this.QUEUE_MAX+"&page=";
     }
 
     public ImageQ(int buffer, int maxsize, int step)//if you're pulling more than 20 waifus per enqueue, it's gonna create duplicates.
     {
         this.BUFFER_SIZE = buffer;
         this.QUEUE_MAX = maxsize;
-        this.url = "https://danbooru.donmai.us/posts.json?limit="+this.QUEUE_MAX+"&page=";
+        this.url = "&limit="+this.QUEUE_MAX+"&page=";
         this.ENQUEUE_INC = step;
     }
 
