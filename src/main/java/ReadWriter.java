@@ -31,7 +31,8 @@ public class ReadWriter {
             e.printStackTrace();
         }
     }
-    public static boolean scanForTags(File file, String requestedWord){
+    public static boolean scanForTags(String requestedWord){
+        File file = new File("pref.txt");
         try {
             Scanner sc=new Scanner(file);
             while(sc.hasNextLine()) {
