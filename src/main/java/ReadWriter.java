@@ -48,4 +48,21 @@ public class ReadWriter {
         }
         return false;
     }
+     public static boolean scanForWaifu(String requestedWord){
+        File file = new File("bestgirls.txt");
+        try {
+            Scanner sc=new Scanner(file);
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine();
+                if (line.equals(requestedWord)) {
+                    return true;
+                }
+            }
+            sc.close();
+            return false;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
