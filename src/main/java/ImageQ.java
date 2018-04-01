@@ -58,14 +58,67 @@ public class ImageQ{
 
     public void search(String character) throws Exception//Searches danbooru for jsons of posts tagged with the character tags provided.
     {
-        this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
-        this.waifuList = new LinkedList();
+		if(source == null)//quick error checking to prevent weird things from happening
+		{
+			this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
+		}
+		else
+		{
+			System.err.println("Error while executing source(): Source URL was already initialized! If you intended to overwrite this, try search(<tag>, true");
+			return;
+		}
+		if(waifuList == null)
+		{
+			this.waifuList = new LinkedList();
+		}
+		else
+		{
+			System.err.println("Error while executing source(): JSON List was already initialized! If you intended to overwrite this, try search(<tag>, true");
+			return;
+		}
         update();
         if (this.waifuList.size() < QUEUE_MAX)
         {
             update();
         }
     }
+	
+	public void search(String character, bool overwrite)
+	{
+		if(source == null)//quick error checking to prevent weird things from happening
+		{
+			this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
+		}
+		else if (overwrite == false)
+		{
+			System.err.println("Error while executing source(): Source URL was already initialized and overwrite was set to false!");
+			return;
+		}
+		else
+		{
+			this.source = null;
+			this.source = new URL((this.url + character + this.query + this.onpage));
+		}
+		if(waifuList == null)
+		{
+			this.waifuList = new LinkedList();
+		}
+		else if (overwrite == false)
+		{
+			System.err.println("Error while executing source(): Waifu list was already initialized and overwrite was set to false!");
+			return;
+		}
+		else
+		{
+			this.waifuList = null;
+			this.waifuList = new LinkedList();
+		}
+        update();
+        if (this.waifuList.size() < QUEUE_MAX)
+        {
+            update();
+        }
+	}
 
     private void update() throws Exception //update is VERY similar to what i want to do with search so i just call it in search.
     {
