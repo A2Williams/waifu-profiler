@@ -1,8 +1,11 @@
 import java.io.*;
 import java.net.*;
 import java.util.LinkedList;
-
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import org.json.*;
+
+import javax.imageio.ImageIO;
 
 public class ImageQ{
     private static int BUFFER_SIZE; //How few images before we start adding more to the queue?
@@ -58,67 +61,14 @@ public class ImageQ{
 
     public void search(String character) throws Exception//Searches danbooru for jsons of posts tagged with the character tags provided.
     {
-		if(source == null)//quick error checking to prevent weird things from happening
-		{
-			this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
-		}
-		else
-		{
-			System.err.println("Error while executing source(): Source URL was already initialized! If you intended to overwrite this, try search(<tag>, true");
-			return;
-		}
-		if(waifuList == null)
-		{
-			this.waifuList = new LinkedList();
-		}
-		else
-		{
-			System.err.println("Error while executing source(): JSON List was already initialized! If you intended to overwrite this, try search(<tag>, true");
-			return;
-		}
+        this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
+        this.waifuList = new LinkedList();
         update();
         if (this.waifuList.size() < QUEUE_MAX)
         {
             update();
         }
     }
-	
-	public void search(String character, bool overwrite)
-	{
-		if(source == null)//quick error checking to prevent weird things from happening
-		{
-			this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
-		}
-		else if (overwrite == false)
-		{
-			System.err.println("Error while executing source(): Source URL was already initialized and overwrite was set to false!");
-			return;
-		}
-		else
-		{
-			this.source = null;
-			this.source = new URL((this.url + character + this.query + this.onpage));
-		}
-		if(waifuList == null)
-		{
-			this.waifuList = new LinkedList();
-		}
-		else if (overwrite == false)
-		{
-			System.err.println("Error while executing source(): Waifu list was already initialized and overwrite was set to false!");
-			return;
-		}
-		else
-		{
-			this.waifuList = null;
-			this.waifuList = new LinkedList();
-		}
-        update();
-        if (this.waifuList.size() < QUEUE_MAX)
-        {
-            update();
-        }
-	}
 
     private void update() throws Exception //update is VERY similar to what i want to do with search so i just call it in search.
     {
@@ -153,5 +103,18 @@ public class ImageQ{
                 update();
             }
         }
+    }
+
+    public Image getNextWaifu() throws Exception//Gets the image, then pops the JSON it took the image from. Use in conjunction with getList() for any UI stuff.
+    {
+        Image waifu = null;
+        URL waifuSrc = new URL(this.waifuList.get(0).getString("large_file_url"));
+        waifu = SwingFXUtils.toFXImage(ImageIO.read(waifuSrc), null);
+        this.waifuList.pop();
+        if (this.waifuList.size() < this.BUFFER_SIZE && this.waifuList.size() < this.QUEUE_MAX)//in theory, the second part of this statement should never be true.
+        {
+            this.update();
+        }
+        return waifu;
     }
 }
