@@ -108,12 +108,19 @@ public class ImageQ{
     public Image getNextWaifu() throws Exception//Gets the image, then pops the JSON it took the image from. Use in conjunction with getList() for any UI stuff.
     {
         Image waifu = null;
-        URL waifuSrc = new URL(this.waifuList.get(0).getString("large_file_url"));
-        waifu = SwingFXUtils.toFXImage(ImageIO.read(waifuSrc), null);
-        this.waifuList.pop();
-        if (this.waifuList.size() < this.BUFFER_SIZE && this.waifuList.size() < this.QUEUE_MAX)//in theory, the second part of this statement should never be true.
+        if (waifuList != null)
         {
-            this.update();
+            URL waifuSrc = new URL(this.waifuList.get(0).getString("large_file_url"));
+            waifu = SwingFXUtils.toFXImage(ImageIO.read(waifuSrc), null);
+            this.waifuList.pop();
+            if (this.waifuList.size() < this.BUFFER_SIZE && this.waifuList.size() < this.QUEUE_MAX)//in theory, the second part of this statement should never be true.
+            {
+                this.update();
+            }
+        }
+        else
+        {
+            System.err.println("Error while executing getNextWaifu(): getNextWaifu() was called before initial search()!");
         }
         return waifu;
     }
