@@ -19,11 +19,11 @@ public class ReadWriter {
         }
     }
     //Don't know if this is neccesary
-    public static void saveWaifu(String urlinp,String nameinp){
+    public static void saveWaifu(Double ratinginp,String nameinp){
         File file = new File("bestgirls.txt");
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
-            bw.write(urlinp+","+nameinp);
+            bw.write(ratinginp+","+nameinp);
             bw.newLine();
             bw.flush();
             bw.close();
