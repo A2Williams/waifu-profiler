@@ -7,7 +7,7 @@ public class ReadWriter {
      ReadWriter(){
         File file = new File("bestgirls.txt");
         try {
-            BufferedWriter eraser = new BufferedWriter(new FileWriter(file));
+            BufferedWriter eraser = new BufferedWriter(new FileWriter(file,false));
             eraser.write("Waifus:");
             eraser.newLine();
             eraser.close();
@@ -16,7 +16,7 @@ public class ReadWriter {
         }
     }
 
-    public static void recordTag(String inp) {
+    public void recordTag(String inp) {
         File file = new File("pref.txt");
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
@@ -29,19 +29,18 @@ public class ReadWriter {
         }
     }
     //Don't know if this is neccesary
-    public static void saveWaifu(Double ratinginp,String nameinp){
+    public void saveWaifu(Double ratinginp,String nameinp){
         File file = new File("bestgirls.txt");
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
             bw.write(ratinginp+","+nameinp);
             bw.newLine();
-            bw.flush();
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static boolean scanForTags(String requestedWord){
+    public boolean scanForTags(String requestedWord){
         File file = new File("pref.txt");
         try {
             Scanner sc=new Scanner(file);
@@ -58,7 +57,7 @@ public class ReadWriter {
         }
         return false;
     }
-     public static boolean scanForWaifu(String requestedWord){
+     public boolean scanForWaifu(String requestedWord){
         File file = new File("bestgirls.txt");
         try {
             Scanner sc=new Scanner(file);
@@ -74,5 +73,16 @@ public class ReadWriter {
             e.printStackTrace();
         }
         return false;
+    }
+    public void end(int i){
+        File file = new File("bestgirls.txt");
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
+            bw.write("_______________________________________________________________________________");
+            bw.newLine();
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
