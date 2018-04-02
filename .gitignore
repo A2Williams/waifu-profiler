@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 # local  Files and folders
 /.idea
 /.gradle
 /out
+=======
+# local Files and folders
+.idea/
+.gradle/
+out/
+*.iml
+>>>>>>> d6c5b657490ec38c1a027759c54d184698f1f3da
 
 # Compiled class file
 *.class

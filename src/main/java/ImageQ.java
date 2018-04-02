@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.Random;
 
 import javafx.embed.swing.SwingFXUtils;
@@ -10,14 +11,15 @@ import org.json.*;
 import javax.imageio.ImageIO;
 
 public class ImageQ{
-    private static int BUFFER_SIZE; //How few images before we start adding more to the queue?
-    private static int QUEUE_MAX; //How many images before we refuse to queue any more images?
-    private static int ENQUEUE_INC;//How many pages do we increment by every time we enqueue more waifus?
-    private String url = "https://safebooru.donmai.us/posts.json?tags=solo%20"; //the first part of the query to danbooru
+    private int BUFFER_SIZE; //How few images before we start adding more to the queue?
+    private int QUEUE_MAX; //How many images before we refuse to queue any more images?
+    private int ENQUEUE_INC;//How many pages do we increment by every time we enqueue more waifus?
+    private String url = "http://safebooru.donmai.us/posts.json?login=waifuPullTest&apikey=7BKJxufmWepCLH8O4NaL3rtQ0FDzsPlh_DP5HiQdGLM&tags=solo%20"; //the first part of the query to danbooru
     private String query; //the second part of the query to danbooru
     //in both the above instances, program inputs will be placed in the input area"
     private URL source;
     private int onpage;
+    private String wsearch;
     private LinkedList<JSONObject> waifuList; //queues are FIFO, so all waifuQueus will be automatically sorted by date.
 
     public ImageQ ()
@@ -34,14 +36,14 @@ public class ImageQ{
     {
         this.BUFFER_SIZE = buffer;
         this.QUEUE_MAX = maxsize;
-        this.url = "&limit="+this.QUEUE_MAX+"&page=";
+        this.url = "&limit="+String.valueOf(maxsize)+"&page=";
     }
 
     public ImageQ(int buffer, int maxsize, int step)//if you're pulling more than 20 waifus per enqueue, it's gonna create duplicates.
     {
         this.BUFFER_SIZE = buffer;
         this.QUEUE_MAX = maxsize;
-        this.url = "&limit="+this.QUEUE_MAX+"&page=";
+        this.url = "&limit="+String.valueOf(maxsize)+"&page=";
         this.ENQUEUE_INC = step;
     }
 
@@ -63,8 +65,9 @@ public class ImageQ{
 
     public void search(String character) throws Exception//Searches danbooru for jsons of posts tagged with the character tags provided.
     {
-        if(source == null)//quick error checking to prevent weird things from happening
+        if(this.source == null)//quick error checking to prevent weird things from happening
         {
+            this.wsearch = character;
             this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
         }
         else
@@ -72,7 +75,7 @@ public class ImageQ{
             System.err.println("Error while executing source(): Source URL was already initialized! If you intended to overwrite this, try search(<tag>, true");
             return;
         }
-        if(waifuList == null)
+        if(this.waifuList == null)
         {
             this.waifuList = new LinkedList();
         }
@@ -82,16 +85,13 @@ public class ImageQ{
             return;
         }
         update();
-        if (this.waifuList.size() < QUEUE_MAX)
-        {
-            update();
-        }
     }
 
     public void search(String character, boolean overwrite) throws Exception
     {
-        if(source == null)//quick error checking to prevent weird things from happening
+        if(this.source == null)//quick error checking to prevent weird things from happening
         {
+            this.wsearch = character;
             this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
         }
         else if (overwrite == false)
@@ -102,9 +102,11 @@ public class ImageQ{
         else
         {
             this.source = null;
+            this.wsearch = "";
+            this.wsearch = character;
             this.source = new URL((this.url + character + this.query + this.onpage));
         }
-        if(waifuList == null)
+        if(this.waifuList == null)
         {
             this.waifuList = new LinkedList();
         }
@@ -119,10 +121,6 @@ public class ImageQ{
             this.waifuList = new LinkedList();
         }
         update();
-        if (this.waifuList.size() < QUEUE_MAX)
-        {
-            update();
-        }
     }
 
 
@@ -132,6 +130,7 @@ public class ImageQ{
             URLConnection sourceConn = this.source.openConnection(); //opens a connection to the json list.
             sourceConn.setDoInput(true);
             sourceConn.setDoOutput(false);
+            sourceConn.addRequestProperty("User-Agent", "WaifuApp/0.5");
 
             InputStream inStream = sourceConn.getInputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(inStream)); //Creates a buffered reader to read data from the connection to danbooru.
@@ -153,9 +152,6 @@ public class ImageQ{
             }
             inStream.close();
             this.onpage += this.ENQUEUE_INC;
-            if (this.waifuList.size() < QUEUE_MAX) {
-                update();
-            }
         }
     }
 
@@ -185,15 +181,22 @@ public class ImageQ{
         search(data.getJSONObject(decision).getString("name"), true);
     }
 
-    public Image getNextWaifu() throws Exception//Gets the image, then pops the JSON it took the image from. Use in conjunction with getList() for any UI stuff.
+    public Waifu getNextWaifu() throws Exception//Gets the image, then pops the JSON it took the image from. Use in conjunction with getList() for any UI stuff.
     {
-        Image waifu = null;
+        String waifuSrc = null;
+        String waifuName = null;
         if (waifuList != null)
         {
-            URL waifuSrc = new URL(this.waifuList.get(0).getString("large_file_url"));
-            waifu = SwingFXUtils.toFXImage(ImageIO.read(waifuSrc), null);
+            if(this.waifuList.get(0).getString("file_url").contains("https")) {
+                waifuSrc = new String(this.waifuList.get(0).getString("file_url"));
+            }
+            else
+            {
+                waifuSrc = new String("https://safebooru.donmai.us"+this.waifuList.get(0).getString("file_url"));
+            }
+            waifuName = wsearch.replace('_', ' ');
             this.waifuList.pop();
-            if (this.waifuList.size() < this.BUFFER_SIZE && this.waifuList.size() < this.QUEUE_MAX)//in theory, the second part of this statement should never be true.
+            if (this.waifuList.size() < 1)
             {
                 this.update();
             }
@@ -202,6 +205,6 @@ public class ImageQ{
         {
             System.err.println("Error while executing getNextWaifu(): getNextWaifu() was called before initial search()!");
         }
-        return waifu;
+        return new Waifu(waifuSrc, waifuName);
     }
 }
