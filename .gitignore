@@ -1,7 +1,8 @@
 # local Files and folders
-/.idea
-/.gradle
-/out
+.idea/
+.gradle/
+out/
+*.iml
 
 # Compiled class file
 *.class
