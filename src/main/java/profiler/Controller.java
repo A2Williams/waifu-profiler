@@ -8,10 +8,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.Buffer;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Controller {
     @FXML private Label waifuName;
@@ -66,12 +66,72 @@ public class Controller {
         }
         getRandomWaifu();
     }
+
     private void getRandomWaifu() {
         randNum = rand.nextInt(waifuList.size());
         imageView.setImage(waifuList.get(randNum).getWaifuImage());
         waifuName.setText(waifuList.get(randNum).getWaifuName());
     }
+
+
     private void loadWaifusCSV(String fileName) {
+        ObservableList<Waifu> t1 = FXCollections.observableArrayList();
+        ObservableList<Waifu> t2 = FXCollections.observableArrayList();
+        File file=new File("waifus.csv");
+        Scanner sc= null;
+        try {
+            sc = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        int waifuCount=0;
+        while(sc.hasNextLine()){
+            sc.nextLine();
+            waifuCount=waifuCount+1;
+        }
+        //Essentially what im going to do is have multiple threads run to divide up the work of going through the function
+        //Problems are:
+        //Need to figure out how many waifus is automatically to know how many times/threads
+        //need to append to the waifulist each time
+        int iterator=0;
+        int count=0;
+        int backup=waifuCount;
+        if(waifuCount % 2 != 0){
+            backup=waifuCount+1;
+        }
+            WaifuThread wt = new WaifuThread("T1", fileName, iterator,backup/2);
+
+            iterator=iterator+waifuCount/2;
+
+            WaifuThread wt2 = new WaifuThread("T2", fileName, iterator,waifuCount/2);
+
+            iterator=iterator+5;
+            t1 = wt.start();
+            t2 = wt2.start();
+            try {
+                while(wt.isAlive()) {
+                    Thread.sleep(50);
+                }
+                while(wt2.isAlive()) {
+                    Thread.sleep(50);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("8"+"\nT1.size:"+t1.size());
+            for(int i=0;i<t1.size();i++){
+                waifuList.add(count,t1.get(i));
+                count=count+1;
+            }
+            System.out.println("8"+"\nT2.size:"+t2.size());
+            for(int p=0;p<t2.size();p++){
+                waifuList.add(count,t2.get(p));
+                count=count+1;
+            }
+            t1.removeAll();
+            t2.removeAll();
+    }
+        /*
         String delimiter = ",";
         String line = "";
         int i = 0;
@@ -88,4 +148,5 @@ public class Controller {
             e.printStackTrace();
         }
     }
+    */
 }
