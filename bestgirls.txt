@@ -1,0 +1,19 @@
+1.0,Matsumoto Rangiku
+0.0,Hatsune Miku
+1.0,Shihouin Yoruichi
+0.0,Kuchiki Rukia
+1.0,Olivia Colomar
+0.0,Haruno Sakura
+1.0,Artoria Pendragon
+0.0,Boa Hancock
+1.0,Inoue Orihime
+0.0,Brigitte Lindholm
+0.0,Violet Evergarden
+1.0,Sarah Fortune
+0.0,Rider(Medusa)
+1.0,Emerald Herald
+0.0,Angela Ziegler
+1.0,Yamanaka Ino
+0.0,Hayashimo Kai
+1.0,Hyuuga Hinata
+0.0,Tsunade
