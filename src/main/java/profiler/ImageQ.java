@@ -1,3 +1,5 @@
+package profiler;
+
 import java.io.*;
 import java.net.*;
 import java.util.LinkedList;
@@ -6,7 +8,7 @@ import java.util.Random;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import org.json.*;
+//import org.json.*;
 
 import javax.imageio.ImageIO;
 
@@ -20,7 +22,7 @@ public class ImageQ{
     private URL source;
     private int onpage;
     private String wsearch;
-    private LinkedList<JSONObject> waifuList; //queues are FIFO, so all waifuQueus will be automatically sorted by date.
+    //private LinkedList<JSONObject> waifuList; //queues are FIFO, so all waifuQueus will be automatically sorted by date.
 
     public ImageQ ()
     {
@@ -47,7 +49,7 @@ public class ImageQ{
         this.ENQUEUE_INC = step;
     }
 
-    public LinkedList<JSONObject> getList() throws Exception//Since most usage of getList() will be to pop, I need to add the buffer logic in here.
+    /*public LinkedList<JSONObject> getList() throws Exception//Since most usage of getList() will be to pop, I need to add the buffer logic in here.
     {
         if (this.source == null || waifuList == null)
         {
@@ -206,5 +208,5 @@ public class ImageQ{
             System.err.println("Error while executing getNextWaifu(): getNextWaifu() was called before initial search()!");
         }
         return new Waifu(waifuSrc, waifuName);
-    }
+    }*/
 }
