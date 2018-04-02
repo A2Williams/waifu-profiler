@@ -13,7 +13,7 @@ public class ImageQ{
     private static int BUFFER_SIZE; //How few images before we start adding more to the queue?
     private static int QUEUE_MAX; //How many images before we refuse to queue any more images?
     private static int ENQUEUE_INC;//How many pages do we increment by every time we enqueue more waifus?
-    private String url = "https://danbooru.donmai.us/posts.json?tags=solo%20"; //the first part of the query to danbooru
+    private String url = "https://safebooru.donmai.us/posts.json?tags=solo%20"; //the first part of the query to danbooru
     private String query; //the second part of the query to danbooru
     //in both the above instances, program inputs will be placed in the input area"
     private URL source;
@@ -165,7 +165,7 @@ public class ImageQ{
     {
         Random rand = new Random();
         int page = rand.nextInt(1000);
-        URL tagChars = new URL("http://danbooru.donmai.us/tags.json?search[category]=4&page="+String.valueOf(page)); //grabs all characters under
+        URL tagChars = new URL("http://safebooru.donmai.us/tags.json?search[category]=4&page="+String.valueOf(page)); //grabs all characters under
         URLConnection chars = tagChars.openConnection();
         chars.setDoOutput(false);
         chars.setDoInput(true);
