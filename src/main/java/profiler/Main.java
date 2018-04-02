@@ -10,12 +10,13 @@ import java.util.*;
 
 
 public class Main extends Application {
-    protected ClientConnect client;
+
     @Override
-    public void start(Stage stage) throws Exception{
-        client = new ClientConnect(this.getParameters().toString());
+    public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("display.fxml"));
         Parent root = loader.load();
+        Controller controller = loader.getController();
+        controller.setHost(getParameters().toString());
         Scene scene = new Scene(root, 600, 600);
         stage.setTitle("Waifu Profiler");
         stage.setScene(scene);
