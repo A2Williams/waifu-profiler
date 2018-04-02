@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.Random;
 
 import javafx.embed.swing.SwingFXUtils;
@@ -10,10 +11,10 @@ import org.json.*;
 import javax.imageio.ImageIO;
 
 public class ImageQ{
-    private static int BUFFER_SIZE; //How few images before we start adding more to the queue?
-    private static int QUEUE_MAX; //How many images before we refuse to queue any more images?
-    private static int ENQUEUE_INC;//How many pages do we increment by every time we enqueue more waifus?
-    private String url = "https://safebooru.donmai.us/posts.json?tags=solo%20"; //the first part of the query to danbooru
+    private int BUFFER_SIZE; //How few images before we start adding more to the queue?
+    private int QUEUE_MAX; //How many images before we refuse to queue any more images?
+    private int ENQUEUE_INC;//How many pages do we increment by every time we enqueue more waifus?
+    private String url = "http://safebooru.donmai.us/posts.json?login=waifuPullTest&apikey=7BKJxufmWepCLH8O4NaL3rtQ0FDzsPlh_DP5HiQdGLM&tags=solo%20"; //the first part of the query to danbooru
     private String query; //the second part of the query to danbooru
     //in both the above instances, program inputs will be placed in the input area"
     private URL source;
@@ -34,14 +35,14 @@ public class ImageQ{
     {
         this.BUFFER_SIZE = buffer;
         this.QUEUE_MAX = maxsize;
-        this.url = "&limit="+this.QUEUE_MAX+"&page=";
+        this.url = "&limit="+String.valueOf(maxsize)+"&page=";
     }
 
     public ImageQ(int buffer, int maxsize, int step)//if you're pulling more than 20 waifus per enqueue, it's gonna create duplicates.
     {
         this.BUFFER_SIZE = buffer;
         this.QUEUE_MAX = maxsize;
-        this.url = "&limit="+this.QUEUE_MAX+"&page=";
+        this.url = "&limit="+String.valueOf(maxsize)+"&page=";
         this.ENQUEUE_INC = step;
     }
 
@@ -82,10 +83,6 @@ public class ImageQ{
             return;
         }
         update();
-        if (this.waifuList.size() < QUEUE_MAX)
-        {
-            update();
-        }
     }
 
     public void search(String character, boolean overwrite) throws Exception
@@ -119,10 +116,6 @@ public class ImageQ{
             this.waifuList = new LinkedList();
         }
         update();
-        if (this.waifuList.size() < QUEUE_MAX)
-        {
-            update();
-        }
     }
 
 
@@ -132,6 +125,7 @@ public class ImageQ{
             URLConnection sourceConn = this.source.openConnection(); //opens a connection to the json list.
             sourceConn.setDoInput(true);
             sourceConn.setDoOutput(false);
+            sourceConn.addRequestProperty("User-Agent", "WaifuApp/0.5");
 
             InputStream inStream = sourceConn.getInputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(inStream)); //Creates a buffered reader to read data from the connection to danbooru.
@@ -153,9 +147,6 @@ public class ImageQ{
             }
             inStream.close();
             this.onpage += this.ENQUEUE_INC;
-            if (this.waifuList.size() < QUEUE_MAX) {
-                update();
-            }
         }
     }
 
@@ -190,10 +181,23 @@ public class ImageQ{
         Image waifu = null;
         if (waifuList != null)
         {
-            URL waifuSrc = new URL(this.waifuList.get(0).getString("large_file_url"));
-            waifu = SwingFXUtils.toFXImage(ImageIO.read(waifuSrc), null);
+            URL waifuSrc;
+            if(this.waifuList.get(0).getString("file_url").contains("https")) {
+                waifuSrc = new URL(this.waifuList.get(0).getString("file_url"));
+            }
+            else
+            {
+                waifuSrc = new URL("https://safebooru.donmai.us"+this.waifuList.get(0).getString("file_url"));
+            }
+            URLConnection sourceConn = waifuSrc.openConnection();
+            sourceConn.setDoInput(true);
+            sourceConn.setDoOutput(false);
+            sourceConn.addRequestProperty("User-Agent", "WaifuApp/0.5");
+            InputStream inStream = sourceConn.getInputStream();
+            waifu = SwingFXUtils.toFXImage(ImageIO.read(inStream), null);
             this.waifuList.pop();
-            if (this.waifuList.size() < this.BUFFER_SIZE && this.waifuList.size() < this.QUEUE_MAX)//in theory, the second part of this statement should never be true.
+            inStream.close();
+            if (this.waifuList.size() < 1)//in theory, the second part of this statement should never be true.
             {
                 this.update();
             }
