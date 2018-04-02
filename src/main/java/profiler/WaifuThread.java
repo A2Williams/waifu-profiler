@@ -64,7 +64,11 @@ public class WaifuThread implements Runnable{
                 String[] wafiuline = row.split(delimiter);
                 //for testing System.out.println(line+" ~ "+threadName);
                 //Append to list
-                waifuList.add(currentIterator, new Waifu(wafiuline[0],wafiuline[1]));
+                try {
+                    waifuList.add(currentIterator, new Waifu(wafiuline[0],wafiuline[1]));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 //iterate the iterator of the loop
                 currentIterator=currentIterator+1;
                 //System.out.println("Country [code= " + wafiuline[0] + " , name=" + wafiuline[1] + "]");
