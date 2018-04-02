@@ -7,70 +7,76 @@ import java.io.*;
 import java.util.Scanner;
 
 public class WaifuThread implements Runnable{
-    private Thread t;
+    //Declare Variables for class
+    private Thread thread;
     private String threadName;
-    private String fname;
-    private int i;
+    private String filename;
+    //Used to find the position in which the thread will grab info from to prevent
+    //Duplicate photos
+    private int position;
     private int limit;
+    //the Master List
     public ObservableList<Waifu> waifuList = FXCollections.observableArrayList();
-
-    WaifuThread(String name,String fileName,int c,int upperlim) {
+    //Initialize the thread with the required info
+    WaifuThread(String name,String fileName,int pos,int upperlim) {
         limit=upperlim;
         threadName = name;
-        fname = fileName;
-        i=c;
+        filename = fileName;
+        position =pos;
         //System.out.println("Creating " + threadName);
     }
+    //Check if thread it is still active for if statements to make sure the function calling it wont go past till its done
     public boolean isAlive(){
-        return t.isAlive();
+        return thread.isAlive();
     }
+    //Run Thread
     public void run(){
         //System.out.println("RUN-"+threadName);
+        //Set variables
         String delimiter = ",";
-        String line = "";
+        String row = "";
         int currentIterator = 0;
-        File file=new File(fname);
-        Scanner br = null;
+        File file=new File(filename);
+        Scanner scanner = null;
+        //Initilize Scanner
         try {
-            br = new Scanner(file);
+            scanner = new Scanner(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        //Prep for the loop
         int count=0;
-        if(i!=0) {
-            while (i > count) {
-                br.nextLine();
+        //If this isnt the first thread position wont equal 0
+        //Then set it so nextLine will proper position line
+        if(position !=0) {
+            while (position > count) {
+                scanner.nextLine();
                 count=count+1;
             }
         }
+        //Start Algorithm to load the data from the csv
         System.out.println("Loading Waifus... Thread:"+threadName);
-            while (br.hasNextLine() && currentIterator<limit) {
+        //Prevent the scanner from scanning nothing AND not going over the limit of how much to load in this
+            while (scanner.hasNextLine() && currentIterator<limit) {
                 // use comma as separator
-                String kine=br.nextLine();
-                String[] wafiuline = kine.split(delimiter);
-                //for testing System.out.println(kine+" ~ "+threadName);
-                try
-                {
-                    waifuList.add(currentIterator, new Waifu(wafiuline[0],wafiuline[1]));
-                }
-                catch (IOException e)
-                {
-                    System.err.println("Error while creating waifu: " + e.getMessage()+ ". Printing stack...");
-                    e.printStackTrace();
-                    waifuList.add(null);
-                }
+                row=scanner.nextLine();
+                //Split the line by the delimiter
+                String[] wafiuline = row.split(delimiter);
+                //for testing System.out.println(line+" ~ "+threadName);
+                //Append to list
+                waifuList.add(currentIterator, new Waifu(wafiuline[0],wafiuline[1]));
+                //iterate the iterator of the loop
                 currentIterator=currentIterator+1;
-                i = i + 1;
                 //System.out.println("Country [code= " + wafiuline[0] + " , name=" + wafiuline[1] + "]");
             }
-
        // System.out.println("DONE");
-
     }
     public ObservableList<Waifu> start(){
         //System.out.println("Starting " +  threadName );
-        t=new Thread(this,threadName);
-        t.start();//run();
+
+        //Initialize and run thread then return the master list
+        thread =new Thread(this,threadName);
+        thread.start();//run();
         return waifuList;
     }
 
