@@ -49,7 +49,16 @@ public class WaifuThread implements Runnable{
                 String kine=br.nextLine();
                 String[] wafiuline = kine.split(delimiter);
                 //for testing System.out.println(kine+" ~ "+threadName);
-                waifuList.add(currentIterator, new Waifu(wafiuline[0],wafiuline[1]));
+                try
+                {
+                    waifuList.add(currentIterator, new Waifu(wafiuline[0],wafiuline[1]));
+                }
+                catch (IOException e)
+                {
+                    System.err.println("Error while creating waifu: " + e.getMessage()+ ". Printing stack...");
+                    e.printStackTrace();
+                    waifuList.add(null);
+                }
                 currentIterator=currentIterator+1;
                 i = i + 1;
                 //System.out.println("Country [code= " + wafiuline[0] + " , name=" + wafiuline[1] + "]");
