@@ -38,6 +38,8 @@ public class Controller {
         waifuList.remove(randNum);
         if(waifuList.size() == 0){
             for(int k = 0; k < tempList.size(); k++){
+                ReadWriter rw=new ReadWriter();
+                rw.saveWaifu(tempList.get(k).getWaifuRating(),tempList.get(k).getWaifuName());
                 System.out.println(
                         tempList.get(k).getWaifuName() + " - " + " RATE: " + tempList.get(k).getWaifuRating() + ". Is Waifu: "
                                 + tempList.get(k).getWaifuYESNO());
@@ -54,6 +56,8 @@ public class Controller {
         waifuList.remove(randNum);
         if(waifuList.size() == 0){
             for(int k = 0; k < tempList.size(); k++){
+                ReadWriter rw=new ReadWriter();
+                rw.saveWaifu(tempList.get(k).getWaifuRating(),tempList.get(k).getWaifuName());
                 System.out.println(
                         tempList.get(k).getWaifuName() + " - " + " RATE: " + tempList.get(k).getWaifuRating() + ". Is Waifu: "
                         + tempList.get(k).getWaifuYESNO());
