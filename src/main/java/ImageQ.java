@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.util.LinkedList;
+import java.util.Random;
+
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.json.*;
@@ -11,8 +13,8 @@ public class ImageQ{
     private static int BUFFER_SIZE; //How few images before we start adding more to the queue?
     private static int QUEUE_MAX; //How many images before we refuse to queue any more images?
     private static int ENQUEUE_INC;//How many pages do we increment by every time we enqueue more waifus?
-    private static String url = "https://danbooru.donmai.us/posts.json?tags="; //the first part of the query to danbooru
-    private static String query; //the second part of the query to danbooru
+    private String url = "https://danbooru.donmai.us/posts.json?tags="; //the first part of the query to danbooru
+    private String query; //the second part of the query to danbooru
     //in both the above instances, program inputs will be placed in the input area"
     private URL source;
     private int onpage;
@@ -61,14 +63,68 @@ public class ImageQ{
 
     public void search(String character) throws Exception//Searches danbooru for jsons of posts tagged with the character tags provided.
     {
-        this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
-        this.waifuList = new LinkedList();
+        if(source == null)//quick error checking to prevent weird things from happening
+        {
+            this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
+        }
+        else
+        {
+            System.err.println("Error while executing source(): Source URL was already initialized! If you intended to overwrite this, try search(<tag>, true");
+            return;
+        }
+        if(waifuList == null)
+        {
+            this.waifuList = new LinkedList();
+        }
+        else
+        {
+            System.err.println("Error while executing source(): JSON List was already initialized! If you intended to overwrite this, try search(<tag>, true");
+            return;
+        }
         update();
         if (this.waifuList.size() < QUEUE_MAX)
         {
             update();
         }
     }
+
+    public void search(String character, boolean overwrite) throws Exception
+    {
+        if(source == null)//quick error checking to prevent weird things from happening
+        {
+            this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
+        }
+        else if (overwrite == false)
+        {
+            System.err.println("Error while executing source(): Source URL was already initialized and overwrite was set to false!");
+            return;
+        }
+        else
+        {
+            this.source = null;
+            this.source = new URL((this.url + character + this.query + this.onpage));
+        }
+        if(waifuList == null)
+        {
+            this.waifuList = new LinkedList();
+        }
+        else if (overwrite == false)
+        {
+            System.err.println("Error while executing source(): Waifu list was already initialized and overwrite was set to false!");
+            return;
+        }
+        else
+        {
+            this.waifuList.clear();
+            this.waifuList = new LinkedList();
+        }
+        update();
+        if (this.waifuList.size() < QUEUE_MAX)
+        {
+            update();
+        }
+    }
+
 
     private void update() throws Exception //update is VERY similar to what i want to do with search so i just call it in search.
     {
@@ -103,6 +159,32 @@ public class ImageQ{
                 update();
             }
         }
+    }
+
+    public void setAsRandom() throws Exception//Generates a random character name.
+    {
+        Random rand = new Random();
+        int page = rand.nextInt(1000);
+        URL tagChars = new URL("http://danbooru.donmai.us/tags.json?search[category]=4&page="+String.valueOf(page)); //grabs all characters under
+        URLConnection chars = tagChars.openConnection();
+        chars.setDoOutput(false);
+        chars.setDoInput(true);
+
+        InputStream inStream = chars.getInputStream();
+        BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+        StringBuffer buffer = new StringBuffer();
+        String line;
+        while ((line = in.readLine()) != null)//Reads in all the JSON data
+        {
+            buffer.append(line);
+        }
+        JSONArray data = new JSONArray(buffer.toString());
+        int decision = rand.nextInt(data.length());
+        while(data.getJSONObject(decision).getString("related_tags").contains("original")) {
+            decision = rand.nextInt(data.length());
+        }
+        inStream.close();
+        search(data.getJSONObject(decision).getString("name"), true);
     }
 
     public Image getNextWaifu() throws Exception//Gets the image, then pops the JSON it took the image from. Use in conjunction with getList() for any UI stuff.
