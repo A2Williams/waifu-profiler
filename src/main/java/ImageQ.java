@@ -19,6 +19,7 @@ public class ImageQ{
     //in both the above instances, program inputs will be placed in the input area"
     private URL source;
     private int onpage;
+    private String wsearch;
     private LinkedList<JSONObject> waifuList; //queues are FIFO, so all waifuQueus will be automatically sorted by date.
 
     public ImageQ ()
@@ -64,8 +65,9 @@ public class ImageQ{
 
     public void search(String character) throws Exception//Searches danbooru for jsons of posts tagged with the character tags provided.
     {
-        if(source == null)//quick error checking to prevent weird things from happening
+        if(this.source == null)//quick error checking to prevent weird things from happening
         {
+            this.wsearch = character;
             this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
         }
         else
@@ -73,7 +75,7 @@ public class ImageQ{
             System.err.println("Error while executing source(): Source URL was already initialized! If you intended to overwrite this, try search(<tag>, true");
             return;
         }
-        if(waifuList == null)
+        if(this.waifuList == null)
         {
             this.waifuList = new LinkedList();
         }
@@ -87,8 +89,9 @@ public class ImageQ{
 
     public void search(String character, boolean overwrite) throws Exception
     {
-        if(source == null)//quick error checking to prevent weird things from happening
+        if(this.source == null)//quick error checking to prevent weird things from happening
         {
+            this.wsearch = character;
             this.source = new URL((this.url + character + this.query + this.onpage)); //Appends all the messy strings into one messy URL.
         }
         else if (overwrite == false)
@@ -99,9 +102,11 @@ public class ImageQ{
         else
         {
             this.source = null;
+            this.wsearch = "";
+            this.wsearch = character;
             this.source = new URL((this.url + character + this.query + this.onpage));
         }
-        if(waifuList == null)
+        if(this.waifuList == null)
         {
             this.waifuList = new LinkedList();
         }
@@ -176,28 +181,22 @@ public class ImageQ{
         search(data.getJSONObject(decision).getString("name"), true);
     }
 
-    public Image getNextWaifu() throws Exception//Gets the image, then pops the JSON it took the image from. Use in conjunction with getList() for any UI stuff.
+    public Waifu getNextWaifu() throws Exception//Gets the image, then pops the JSON it took the image from. Use in conjunction with getList() for any UI stuff.
     {
-        Image waifu = null;
+        String waifuSrc = null;
+        String waifuName = null;
         if (waifuList != null)
         {
-            URL waifuSrc;
             if(this.waifuList.get(0).getString("file_url").contains("https")) {
-                waifuSrc = new URL(this.waifuList.get(0).getString("file_url"));
+                waifuSrc = new String(this.waifuList.get(0).getString("file_url"));
             }
             else
             {
-                waifuSrc = new URL("https://safebooru.donmai.us"+this.waifuList.get(0).getString("file_url"));
+                waifuSrc = new String("https://safebooru.donmai.us"+this.waifuList.get(0).getString("file_url"));
             }
-            URLConnection sourceConn = waifuSrc.openConnection();
-            sourceConn.setDoInput(true);
-            sourceConn.setDoOutput(false);
-            sourceConn.addRequestProperty("User-Agent", "WaifuApp/0.5");
-            InputStream inStream = sourceConn.getInputStream();
-            waifu = SwingFXUtils.toFXImage(ImageIO.read(inStream), null);
+            waifuName = wsearch.replace('_', ' ');
             this.waifuList.pop();
-            inStream.close();
-            if (this.waifuList.size() < 1)//in theory, the second part of this statement should never be true.
+            if (this.waifuList.size() < 1)
             {
                 this.update();
             }
@@ -206,6 +205,6 @@ public class ImageQ{
         {
             System.err.println("Error while executing getNextWaifu(): getNextWaifu() was called before initial search()!");
         }
-        return waifu;
+        return new Waifu(waifuSrc, waifuName);
     }
 }
