@@ -13,7 +13,7 @@ public class ImageQ{
     private static int BUFFER_SIZE; //How few images before we start adding more to the queue?
     private static int QUEUE_MAX; //How many images before we refuse to queue any more images?
     private static int ENQUEUE_INC;//How many pages do we increment by every time we enqueue more waifus?
-    private String url = "https://danbooru.donmai.us/posts.json?tags="; //the first part of the query to danbooru
+    private String url = "https://danbooru.donmai.us/posts.json?tags=solo%20"; //the first part of the query to danbooru
     private String query; //the second part of the query to danbooru
     //in both the above instances, program inputs will be placed in the input area"
     private URL source;
@@ -146,7 +146,7 @@ public class ImageQ{
             JSONArray data = new JSONArray(theJsons);
             for (int i = 0; i < data.length(); i++) //Because danbooru only lets you search 2 tags at once I'll do manual pruning.
             {
-                if (data.getJSONObject(i).getString("tag_string_general").contains("swimsuit") == false && data.getJSONObject(i).getString("tag_string_general").contains("underwear") == false && data.getJSONObject(i).getString("tag_string_general").contains("solo"))
+                if (data.getJSONObject(i).getString("tag_string_general").contains("swimsuit") == false && data.getJSONObject(i).getString("tag_string_general").contains("underwear") == false)
                 {
                     if (data.getJSONObject(i).getString("rating").contains("s")) {
                         this.waifuList.add(data.getJSONObject(i));
