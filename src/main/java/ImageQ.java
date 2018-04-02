@@ -148,9 +148,7 @@ public class ImageQ{
             {
                 if (data.getJSONObject(i).getString("tag_string_general").contains("swimsuit") == false && data.getJSONObject(i).getString("tag_string_general").contains("underwear") == false)
                 {
-                    if (data.getJSONObject(i).getString("rating").contains("s")) {
-                        this.waifuList.add(data.getJSONObject(i));
-                    }
+                    this.waifuList.add(data.getJSONObject(i));
                 }
             }
             inStream.close();
