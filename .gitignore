@@ -1,5 +1,7 @@
-# local Intellij Files and folders
+# local Files and folders
 /.idea
+/.gradle
+/out
 
 # Compiled class file
 *.class
