@@ -4,7 +4,17 @@ import java.io.*;
 import java.util.Scanner;
 
 public class ReadWriter {
-    public static void ReadWriter(){}
+     ReadWriter(){
+        File file = new File("bestgirls.txt");
+        try {
+            BufferedWriter eraser = new BufferedWriter(new FileWriter(file));
+            eraser.write("Waifus:");
+            eraser.newLine();
+            eraser.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void recordTag(String inp) {
         File file = new File("pref.txt");

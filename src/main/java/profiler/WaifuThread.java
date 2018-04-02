@@ -19,13 +19,13 @@ public class WaifuThread implements Runnable{
         threadName = name;
         fname = fileName;
         i=c;
-        System.out.println("Creating " + threadName);
+        //System.out.println("Creating " + threadName);
     }
     public boolean isAlive(){
         return t.isAlive();
     }
     public void run(){
-        System.out.println("RIN");
+        //System.out.println("RUN-"+threadName);
         String delimiter = ",";
         String line = "";
         int currentIterator = 0;
@@ -38,28 +38,28 @@ public class WaifuThread implements Runnable{
         }
         int count=0;
         if(i!=0) {
-            while (i < count) {
+            while (i > count) {
                 br.nextLine();
                 count=count+1;
             }
         }
-        System.out.println("Loading Waifus..."+threadName);
+        System.out.println("Loading Waifus... Thread:"+threadName);
             while (br.hasNextLine() && currentIterator<limit) {
                 // use comma as separator
                 String kine=br.nextLine();
                 String[] wafiuline = kine.split(delimiter);
-
+                //for testing System.out.println(kine+" ~ "+threadName);
                 waifuList.add(currentIterator, new Waifu(wafiuline[0],wafiuline[1]));
                 currentIterator=currentIterator+1;
                 i = i + 1;
                 //System.out.println("Country [code= " + wafiuline[0] + " , name=" + wafiuline[1] + "]");
             }
 
-        System.out.println("DONE");
+       // System.out.println("DONE");
 
     }
     public ObservableList<Waifu> start(){
-        System.out.println("Starting " +  threadName );
+        //System.out.println("Starting " +  threadName );
         t=new Thread(this,threadName);
         t.start();//run();
         return waifuList;

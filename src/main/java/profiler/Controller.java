@@ -118,18 +118,23 @@ public class Controller {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("8"+"\nT1.size:"+t1.size());
+
+            System.out.println("T1.size:"+t1.size());
             for(int i=0;i<t1.size();i++){
                 waifuList.add(count,t1.get(i));
                 count=count+1;
             }
-            System.out.println("8"+"\nT2.size:"+t2.size());
+            System.out.println("T2.size:"+t2.size());
             for(int p=0;p<t2.size();p++){
                 waifuList.add(count,t2.get(p));
                 count=count+1;
             }
             t1.removeAll();
             t2.removeAll();
+
+
+
+        System.out.println(waifuList);
     }
         /*
         String delimiter = ",";
