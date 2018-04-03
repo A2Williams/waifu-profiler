@@ -2,6 +2,7 @@ package profiler;
 
 import java.io.*;
 import java.net.*;
+import java.util.LinkedList;
 
 public class ImageQ{
     private LinkedList<Waifu> waifuList;
