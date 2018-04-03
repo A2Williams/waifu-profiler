@@ -34,9 +34,29 @@ public class Controller {
     public void initialize() {
     }
     public void yesClick(ActionEvent e) {
-
+        //Load the socket with the hostName and port number
+        try {
+            socket = new Socket(hostName, PORT_NUM);
+            //Connect input and output With the socket using Print Writer and BufferedReader
+            fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            toServer = new PrintWriter(socket.getOutputStream());
+            //Print the rating to Server
+            toServer.println("RATE,"+waifuName.toString()+"="+true);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
     public void noClick(ActionEvent e) {
-
+         //Load the socket with the hostName and port number
+        try {
+            socket = new Socket(hostName, PORT_NUM);
+            //Connect input and output With the socket using Print Writer and BufferedReader
+            fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            toServer = new PrintWriter(socket.getOutputStream());
+            //Print the rating to Server
+            toServer.println("RATE,"+waifuName.toString()+"="+false);
+        }catch(IOException e1){
+            e1.printStackTrace();
+        }
     }
 }
