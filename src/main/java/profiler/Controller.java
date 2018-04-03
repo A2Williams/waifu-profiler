@@ -1,17 +1,11 @@
 package profiler;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Random;
 import java.net.*;
 import java.io.*;
 
@@ -19,8 +13,10 @@ import java.io.*;
 public class Controller {
     @FXML private Label waifuName;
     @FXML private ImageView imageView;
+    private ImageQ waifuQueue;
 
     private final int PORT_NUM = 49000;
+    private final int MAX_W = 5;
     private String hostName;
 
     private Socket socket;
@@ -32,31 +28,63 @@ public class Controller {
     }
     @FXML
     public void initialize() {
+        try {
+            waifuQueue = new ImageQ(MAX_W);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Waifu nextWaifu = waifuQueue.getNextWaifu();
+        imageView.setImage(new Image(nextWaifu.getWaifuImageURL()));
+        waifuName.setText(nextWaifu.getWaifuName());
     }
     public void yesClick(ActionEvent e) {
-        //Load the socket with the hostName and port number
+        rateWaifu(true);
+        updateWaifu();
+    }
+    public void noClick(ActionEvent e) {
+        rateWaifu(false);
+        updateWaifu();
+    }
+    private void updateWaifu() {
+        // updates the waifu queue
+        if (0 != waifuQueue.size()) {
+            Waifu nextWaifu = waifuQueue.getNextWaifu();
+            imageView.setImage(new Image(nextWaifu.getWaifuImageURL()));
+            waifuName.setText(nextWaifu.getWaifuName());
+        }
+        else {
+            System.exit(0);
+        }
+    }
+    private void rateWaifu(boolean isYes) {
+        initConnect();
+        //Print the rating to Server
+        if (isYes) {
+            toServer.println("RATE,"+waifuName.getText()+"=true");
+        } else {
+            toServer.println("RATE,"+waifuName.getText()+"=false");
+        }
+        closeConnect();
+    }
+    private void initConnect() {
         try {
+            //Load the socket with the hostName and port number
             socket = new Socket(hostName, PORT_NUM);
             //Connect input and output With the socket using Print Writer and BufferedReader
             fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             toServer = new PrintWriter(socket.getOutputStream());
-            //Print the rating to Server
-            toServer.println("RATE,"+waifuName.toString()+"="+true);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
     }
-    public void noClick(ActionEvent e) {
-         //Load the socket with the hostName and port number
+    private void closeConnect() {
         try {
-            socket = new Socket(hostName, PORT_NUM);
-            //Connect input and output With the socket using Print Writer and BufferedReader
-            fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            toServer = new PrintWriter(socket.getOutputStream());
-            //Print the rating to Server
-            toServer.println("RATE,"+waifuName.toString()+"="+false);
-        }catch(IOException e1){
-            e1.printStackTrace();
+            fromServer.close();
+            toServer.close();
+            socket.close();
+        } catch (IOException e) {
+            System.err.println("ERROR: Cannot close!");
+            e.printStackTrace();
         }
     }
 }
