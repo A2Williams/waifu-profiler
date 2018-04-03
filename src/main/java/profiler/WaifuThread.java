@@ -59,9 +59,71 @@ public class WaifuThread extends Thread {
         // A function that sends the client a random waifu from the csv file
         // TODO: send random waifu to client
     }
-    private void handleRate(String ratedWaifu) {
-        // A function that updates the waifu's rating in the csv file
-        // TODO: parse waifu name and rating
-        // TODO: update rating of waifu in csv file
+    private void handleRate(String recievedToken) {
+                // A function that updates the waifu's rating in the csv file
+        // parses waifu name and rating
+        // updates rating of waifu in csv file
+        //Parse the received info
+        StringTokenizer ST=new StringTokenizer(recievedToken,"=");
+        String wifeName=ST.nextToken();
+        String wifeBooleanResult=ST.nextToken();
+        //Find and edit
+        File file = new File("waifu.csv");
+        try {
+            ObservableList<String> futureline= FXCollections.observableArrayList();;
+            Scanner sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+                // use comma as separator
+                String line = sc.nextLine();
+                //for testing System.out.println(line+" ~ "+threadName);
+                //Append to list
+                StringTokenizer tokenizer = new StringTokenizer(line, ",");
+                //URL TOKEN
+                String currentToken=tokenizer.nextToken();
+                futureline.add(currentToken);
+                //NAME TOKEN
+                currentToken=tokenizer.nextToken();
+                futureline.add(currentToken);
+                //CHECK NAME TOKEN
+                if (currentToken.equals(wifeName)) {
+                    //IF THEY CHOSE YES AND NAME TOKEN IS THE SAME
+                    if (wifeBooleanResult.equals("false")) {
+                        //For True title ADD 1
+                        int integerToken = Integer.parseInt(tokenizer.nextToken());
+                        integerToken = integerToken + 1;
+                        currentToken = String.valueOf(integerToken);
+                        futureline.add(currentToken);
+                        //For total ADD 1
+                        integerToken = Integer.parseInt(tokenizer.nextToken());
+                        integerToken = integerToken + 1;
+                        currentToken = String.valueOf(integerToken);
+                        futureline.add(currentToken);
+                    }
+                    //IF THEY CHOSE FALSE AND NAME TOKEN IS THE SAME
+                    else{
+                        //SKIP OVER TRUE TITLE
+                        currentToken = tokenizer.nextToken();
+                        futureline.add(currentToken);
+
+                        //For total ADD 1
+                        int integerToken = Integer.parseInt(tokenizer.nextToken());
+                        integerToken = integerToken + 1;
+                        currentToken = String.valueOf(integerToken);
+                        futureline.add(currentToken);
+                    }
+                }
+                else{
+                    //NOT THE DESIRED WORD SKIP TO NEXT LINE
+                    //TRUE TOKEN
+                    currentToken=tokenizer.nextToken();
+                    futureline.add(currentToken);
+                    //TOTAL TOKEN
+                    currentToken=tokenizer.nextToken();
+                    futureline.add(currentToken);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
