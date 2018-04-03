@@ -29,7 +29,7 @@ public class ImageQ{
 
     }
 
-    public int Size()
+    public int size()
     {
         return this.SIZE;
     }
