@@ -13,13 +13,13 @@ public class ImageQ{
         this.SIZE = size;
         BufferedReader in = new BufferedReader(new InputStreamReader(input.getInputStream()));
         PrintWriter out = new PrintWriter(input.getOutputStream());
-        out.print("GET "+ String.valueOf(size));
+        out.println("GET "+ String.valueOf(size));
         out.flush();
+        String waifu = in.readLine();
+        String[] waifus = waifu.split(",");
         for (int i = 0; i < size; i++)
         {
-            String waifu = in.readLine();
-            String[] waifus = waifu.split(",");
-            waifuList.add(new Waifu(waifus[0],waifus[1]));
+            waifuList.add(new Waifu(waifus[i],waifus[i*2]));
         }
         in.close();
         out.close();
