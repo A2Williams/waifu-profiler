@@ -8,22 +8,25 @@ public class ImageQ{
     private LinkedList<Waifu> waifuList;
     private int SIZE;
 
-    public ImageQ (int size, Socket input) throws IOException
+    public ImageQ (int size, String hostname, int port) throws IOException
     {
         this.SIZE = size;
-        BufferedReader in = new BufferedReader(new InputStreamReader(input.getInputStream()));
-        PrintWriter out = new PrintWriter(input.getOutputStream());
-        out.println("GET "+ String.valueOf(size));
-        out.flush();
-        String waifu = in.readLine();
-        String[] waifus = waifu.split(",");
+
         for (int i = 0; i < size; i++)
         {
-            waifuList.add(new Waifu(waifus[i],waifus[i*2]));
+            Socket input = new Socket(hostname, port);
+            BufferedReader in = new BufferedReader(new InputStreamReader(input.getInputStream()));
+            PrintWriter out = new PrintWriter(input.getOutputStream());
+            out.println("GET");
+            out.flush();
+            String waifu = in.readLine();
+            String[] waifus = waifu.split(",");
+            waifuList.add(new Waifu(waifus[0],waifus[1]));
+            in.close();
+            out.close();
+            input.close();
         }
-        in.close();
-        out.close();
-        input.close();
+
     }
 
     public int Size()
