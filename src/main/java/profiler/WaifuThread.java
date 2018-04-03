@@ -9,10 +9,26 @@ public class WaifuThread extends Thread {
     private Socket socket = null;
     private BufferedReader getRequest;
     private PrintWriter sendResponse;
+    private ArrayList<String> wafiuline;
+    private Random rand = new Random();
+    private int randNum;
 
     public WaifuThread(Socket socket, String csvFile) {
         this.csvFile = csvFile;
         this.socket = socket;
+        
+        String line = "";
+        int i = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            while ((line = br.readLine()) != null) {
+                // use comma as separator
+                wafiuline.add(i, line);
+                i = i + 1;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         // initializing read/write stream connections
         try {
             getRequest = new BufferedReader(
@@ -58,6 +74,9 @@ public class WaifuThread extends Thread {
     private void handleGet() {
         // A function that sends the client a random waifu from the csv file
         // TODO: send random waifu to client
+        randNum = rand.nextInt(wafiuline.size());
+        sendResponse.println(wafiuline.get(randNum));
+        wafiuline.remove(randNum);
     }
     private void handleRate(String recievedToken) {
         // A function that updates the waifu's rating in the csv file
