@@ -1,32 +1,17 @@
 package profiler;
 
 
-import javafx.scene.image.Image;
-
 public class Waifu {
 
-    private Image waifuImage;
     private String waifuImageURL;
     private String waifuName;
-    private double waifuRating;
-    private String waifuYESNO;
+    private float waifuRating;
+    private float waifuTotalVotes;
+
 
     public Waifu(String url, String wname){
-        Image temp = new Image(url);
         this.waifuImageURL = url;
         this.waifuName = wname;
-        setWaifuImage(temp);
-        setWaifuImageURL(url);
-        setWaifuName(wname);
-    }
-
-    public void setWaifuImage(Image wi){
-
-        this.waifuImage = wi;
-    }
-    public Image getWaifuImage(){
-
-        return this.waifuImage;
     }
 
     public String toString()
@@ -34,8 +19,7 @@ public class Waifu {
         String output=this.waifuImageURL+","+this.waifuName;
         return output;
     }
-
-
+    
     public void setWaifuImageURL(String waifuURL){
 
         this.waifuImageURL = waifuURL;
@@ -53,7 +37,7 @@ public class Waifu {
         return waifuName;
     }
 
-    public void setWaifuRating(double rate){
+    public void setWaifuRating(int rate){
         this.waifuRating = rate;
     }
 
@@ -61,11 +45,16 @@ public class Waifu {
         return waifuRating;
     }
 
-    public void setWaifuYESNO(String waifuYESNO) {
-        this.waifuYESNO = waifuYESNO;
-    }
 
-    public String getWaifuYESNO() {
-        return waifuYESNO;
+    public void userSaysYes(){
+        this.waifuRating=this.waifuRating+1;
+        this.waifuTotalVotes=this.waifuTotalVotes+1;
+    }
+    public void userSaysNo(){
+        this.waifuTotalVotes=this.waifuTotalVotes+1;
+    }
+    public float calculatePercentage(){
+        float percentage=this.waifuRating / this.waifuTotalVotes;
+        return percentage;
     }
 }
