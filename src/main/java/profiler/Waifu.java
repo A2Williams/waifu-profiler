@@ -29,6 +29,13 @@ public class Waifu {
         return this.waifuImage;
     }
 
+    public String toString()
+    {
+        String output=this.waifuImageURL+","+this.waifuName;
+        return output;
+    }
+
+
     public void setWaifuImageURL(String waifuURL){
 
         this.waifuImageURL = waifuURL;
