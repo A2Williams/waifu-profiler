@@ -60,7 +60,7 @@ public class WaifuThread extends Thread {
         // TODO: send random waifu to client
     }
     private void handleRate(String recievedToken) {
-                // A function that updates the waifu's rating in the csv file
+        // A function that updates the waifu's rating in the csv file
         // parses waifu name and rating
         // updates rating of waifu in csv file
         //Parse the received info
